@@ -146,8 +146,6 @@ RTLSDR_API int rtlsdr_set_center_freq(rtlsdr_dev_t *dev, uint32_t freq);
 
 RTLSDR_API int rtlsdr_set_if_freq(rtlsdr_dev_t *dev, uint32_t freq);
 
-RTLSDR_API int rtlsdr_set_if_bandwidth(rtlsdr_dev_t *dev, int bw);
-
 /*!
  * Get actual frequency the device is tuned to.
  *

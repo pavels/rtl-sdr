@@ -56,9 +56,29 @@ target_link_libraries(convenience_static
     rtlsdr_shared
 )
 
+add_library(rtlpower_shared SHARED
+    librtlpower.c
+)
+target_link_libraries(rtlpower_shared
+    rtlsdr_shared
+)
+set_target_properties(rtlpower_shared PROPERTIES DEFINE_SYMBOL "rtlpower_EXPORTS")
+set_target_properties(rtlpower_shared PROPERTIES OUTPUT_NAME rtlpower)
+set_target_properties(rtlpower_shared PROPERTIES SOVERSION ${MAJOR_VERSION})
+set_target_properties(rtlpower_shared PROPERTIES VERSION ${LIBVER})
+
+add_library(rtlpower_static STATIC
+    librtlpower.c
+)
+target_link_libraries(rtlpower_static
+    rtlsdr_static
+)
+set_property(TARGET rtlpower_static APPEND PROPERTY COMPILE_DEFINITIONS "rtlpower_STATIC" )
+
 if(NOT WIN32)
 # Force same library filename for static and shared variants of the library
 set_target_properties(rtlsdr_static PROPERTIES OUTPUT_NAME rtlsdr)
+set_target_properties(rtlpower_static PROPERTIES OUTPUT_NAME rtlpower)
 endif()
 
 ########################################################################
@@ -97,7 +117,7 @@ target_link_libraries(rtl_adsb convenience_static rtlsdr_shared
     ${LIBUSB_LIBRARIES}
     ${CMAKE_THREAD_LIBS_INIT}
 )
-target_link_libraries(rtl_power convenience_static rtlsdr_shared
+target_link_libraries(rtl_power convenience_static rtlsdr_shared rtlpower_shared
     ${LIBUSB_LIBRARIES}
     ${CMAKE_THREAD_LIBS_INIT}
 )

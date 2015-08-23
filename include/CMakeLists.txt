@@ -23,5 +23,6 @@
 install(FILES
     rtl-sdr.h
     rtl-sdr_export.h
+    rtl-power.h
     DESTINATION include
 )
