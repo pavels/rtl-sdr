@@ -483,6 +483,18 @@ int frequency_range(struct misc_settings *ms, struct tuning_state *tunes, struct
 	return tune_count + c->hops;
 }
 
+void free_frequency_range(struct tuning_state *tunes, int tune_count)
+{
+	struct tuning_state *ts;
+	for (int i=0; i < tune_count; i++) {
+		ts = &tunes[i];
+		free(ts->avg);
+		free(ts->buf8);
+		free(ts->window_coefs);
+		free(ts->dbm);
+	}
+}
+
 void retune(rtlsdr_dev_t *dev, int freq)
 {
 	uint8_t dump[BUFFER_DUMP];

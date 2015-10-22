@@ -102,6 +102,7 @@ struct misc_settings
 };
 
 RTLPOWER_API int frequency_range(struct misc_settings *ms, struct tuning_state *tunes, struct channel_solve *c,  int tune_count);
+RTLPOWER_API void free_frequency_range(struct tuning_state *tunes, int tune_count);
 RTLPOWER_API void scan_tune(rtlsdr_dev_t *dev,struct tuning_state *ts);
 RTLPOWER_API void generate_sine_tables(struct sine_table *s_tables,struct tuning_state *tunes, int tune_count);
 

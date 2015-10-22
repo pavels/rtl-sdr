@@ -220,7 +220,7 @@ void csv_dbm(struct tuning_state *ts)
 	int i;
 	char *sep = ", ";
 
-	/* Hz low, Hz high, Hz step, samples, dbm, dbm, ... */
+
 	fprintf(file, "%i, %i, %i, %i, ", ts->freq_low, ts->freq_high,
 		ts->bin_spec, ts->samples);
 
