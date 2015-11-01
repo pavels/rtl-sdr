@@ -40,6 +40,10 @@
 #include "getopt/getopt.h"
 #endif
 
+#if defined(_MSC_VER) && _MSC_VER < 1800
+#define round(x) (x > 0.0 ? floor(x + 0.5): ceil(x - 0.5))
+#endif
+
 #include "rtl-sdr.h"
 #include "convenience/convenience.h"
 

@@ -65,6 +65,7 @@
 #define usleep(x) Sleep(x/1000)
 #if defined(_MSC_VER) && _MSC_VER < 1800
 #define round(x) (x > 0.0 ? floor(x + 0.5): ceil(x - 0.5))
+double fmin(double a, double b) { return (a < b) ? a : b; }
 #endif
 #define _USE_MATH_DEFINES
 #endif

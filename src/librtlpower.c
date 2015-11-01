@@ -19,9 +19,20 @@
 
 #include <stdlib.h>
 #include <stdio.h>
+
 #ifndef _WIN32
 #include <unistd.h>
 #define min(a, b) (((a) < (b)) ? (a) : (b))
+#else
+#include <windows.h>
+#include <fcntl.h>
+#include <io.h>
+#include "getopt/getopt.h"
+#define usleep(x) Sleep(x/1000)
+#if defined(_MSC_VER) && _MSC_VER < 1800
+#define round(x) (x > 0.0 ? floor(x + 0.5): ceil(x - 0.5))
+#endif
+#define _USE_MATH_DEFINES
 #endif
 
 #include <math.h>
@@ -71,7 +82,7 @@ void sine_table(struct sine_table *s_tables, int size)
 		return;}
 	sine->LOG2_N_WAVE = size;
 	sine->N_WAVE = 1 << sine->LOG2_N_WAVE;
-	sine->Sinewave = malloc(sizeof(int16_t) * sine->N_WAVE*3/4);
+	sine->Sinewave = (int16_t*) malloc(sizeof(int16_t) * sine->N_WAVE*3/4);
 	for (i=0; i<sine->N_WAVE*3/4; i++)
 	{
 		d = (double)i * 2.0 * M_PI / sine->N_WAVE;
@@ -88,13 +99,13 @@ void generate_sine_tables(struct sine_table *s_tables,struct tuning_state *tunes
 		ts = &tunes[i];
 		sine_table(s_tables,ts->bin_e);
 		ts->sine = &s_tables[ts->bin_e];
-		ts->fft_buf = malloc(ts->buf_len * sizeof(int16_t));
+		ts->fft_buf = (int16_t*)malloc(ts->buf_len * sizeof(int16_t));
 	}
 }
 
-inline int16_t FIX_MPY(int16_t a, int16_t b)
-/* fixed point multiply and scale */
+int16_t FIX_MPY(int16_t a, int16_t b)
 {
+	/* fixed point multiply and scale */
 	int c = ((int)a * (int)b) >> 14;
 	b = c & 0x01;
 	return (c >> 1) + b;
@@ -319,7 +330,7 @@ int solve_downsample(struct channel_solve *c, int target_rate, int boxcar)
 
 int solve_single(struct channel_solve *c, int target_rate)
 {
-	int i, scan_size, bins_all, bins_crop, bin_e, bins_2, bw_needed;
+	int scan_size, bins_all, bins_crop, bin_e, bins_2, bw_needed;
 	scan_size = c->upper - c->lower;
 	bins_all = scan_size / c->bin_spec;
 	bins_crop = (int)ceil((double)bins_all * (1.0 + c->crop));
@@ -451,7 +462,7 @@ int frequency_range(struct misc_settings *ms, struct tuning_state *tunes, struct
 		}
 		ts->buf_len = buf_len;
 		length = 1 << c->bin_e;
-		ts->window_coefs = malloc(length * sizeof(int));
+		ts->window_coefs = (int*)malloc(length * sizeof(int));
 		for (j=0; j<length; j++) {
 			ts->window_coefs[j] = (int)(256*ms->window_fn(j, length));
 		}
@@ -475,7 +486,7 @@ int frequency_range(struct misc_settings *ms, struct tuning_state *tunes, struct
 		logged_bins += hop_bins;
 		ts->crop_i1 = (length - hop_bins) / 2;
 		ts->crop_i2 = ts->crop_i1 + hop_bins - 1;
-		ts->dbm = malloc((ts->crop_i2 - ts-> crop_i1 + 1) * sizeof(double));
+		ts->dbm = (double*)malloc((ts->crop_i2 - ts-> crop_i1 + 1) * sizeof(double));
 		ts->freq = (lower_edge - ts->crop_i1 * c->bin_spec) + c->bw_needed/(2*c->downsample);
 		/* prep for next hop */
 		lower_edge = ts->freq_high;
@@ -486,7 +497,8 @@ int frequency_range(struct misc_settings *ms, struct tuning_state *tunes, struct
 void free_frequency_range(struct tuning_state *tunes, int tune_count)
 {
 	struct tuning_state *ts;
-	for (int i=0; i < tune_count; i++) {
+	int i;
+	for (i = 0; i < tune_count; i++) {
 		ts = &tunes[i];
 		free(ts->avg);
 		free(ts->buf8);
