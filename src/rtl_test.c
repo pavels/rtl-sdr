@@ -166,8 +166,8 @@ static int ppm_gettime(struct time_generic *tg)
 	struct timeval tv;
 
 	rv = gettimeofday(&tv, NULL);
-	ts->tv_sec = tv.tv_sec;
-	ts->tv_nsec = tv.tv_usec * 1000;
+	ts.tv_sec = tv.tv_sec;
+	ts.tv_nsec = tv.tv_usec * 1000;
 #endif
 	return rv;
 }
