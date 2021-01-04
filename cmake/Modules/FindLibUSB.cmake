@@ -5,7 +5,12 @@ if(NOT LIBUSB_FOUND)
     ${LIBUSB_PKG_INCLUDE_DIRS}
     /usr/include/libusb-1.0
     /usr/include
+    /usr/local/include/libusb-1.0
     /usr/local/include
+    /opt/include/libusb-1.0
+    /opt/include
+    /opt/local/include/libusb-1.0
+    /opt/local/include
   )
 
 #standard library name for libusb-1.0
@@ -22,6 +27,8 @@ endif()
     ${LIBUSB_PKG_LIBRARY_DIRS}
     /usr/lib
     /usr/local/lib
+    /opt/lib
+    /opt/local/lib
   )
 
 include(CheckFunctionExists)
